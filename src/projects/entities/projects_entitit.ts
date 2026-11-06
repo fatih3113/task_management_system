@@ -1,40 +1,58 @@
 import {
   Column,
   CreateDateColumn,
-  DeleteDateColumn,
   Entity,
+  JoinColumn,
+  ManyToOne,
+  OneToMany,
   PrimaryGeneratedColumn,
+  Relation,
   UpdateDateColumn,
 } from 'typeorm';
+import { Team } from '../../teams/entities/team.entity';
+import { Task } from '../../tasks/entities/task.entity';
+import { ProjectStatus } from '../enums/project-status.enum';
 
-@Entity({ name: 'users' })
-export class User {
+@Entity('projects')
+export class Project {
+  @PrimaryGeneratedColumn()
+  id: number;
 
+  @Column({ length: 150 })
+  name: string;
 
-  @PrimaryGeneratedColumn('uuid')
-  id: string;
+  @Column({ type: 'text', nullable: true })
+  description: string | null;
 
-  @Column({ type: 'varchar', length: 100 })
-  nama: string;
+  @Column({
+    type: 'enum',
+    enum: ProjectStatus,
+    default: ProjectStatus.ACTIVE,
+  })
+  status: ProjectStatus;
 
-  @Column({ type: 'varchar', length: 100, unique: true })
-  email: string;
+  @Column({ type: 'date', nullable: true })
+  startDate: string | null;
 
-  @Column({ type: 'varchar', length: 20 })
-  phone: string;
+  @Column({ type: 'date', nullable: true })
+  endDate: string | null;
 
-  @Column({ type: 'varchar'})
-  password: string;
+  @Column()
+  teamId: number;
 
-  @Column({ type: 'varchar', length: 100 })
-  alamat: string;
+  @ManyToOne(() => Team, (team) => team.projects, {
+    nullable: false,
+    onDelete: 'RESTRICT',
+  })
+  @JoinColumn({ name: 'teamId' })
+  team: Relation<Team>;
 
-  @CreateDateColumn({ name: 'created_at' })
+  @OneToMany(() => Task, (task) => task.project)
+  tasks: Relation<Task[]>;
+
+  @CreateDateColumn()
   createdAt: Date;
 
-  @UpdateDateColumn({ name: 'updated_at' })
+  @UpdateDateColumn()
   updatedAt: Date;
-
-  @DeleteDateColumn({ name: 'deleted_at' })
-  deletedAt: Date | null;
 }
