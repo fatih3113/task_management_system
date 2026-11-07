@@ -1,33 +1,33 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { TeamsModule } from './teams/teams.module';
-import { MembersModule } from './members/members.module';
-import { ProjectsModule } from './projects/projects.module';
-import { TasksModule } from './tasks/tasks.module';
-import { TaskAssignmentsModule } from './task-assignments/task-assignments.module';
+import { ProjectsModule } from './projects/projects.module.js';
 
 @Module({
   imports: [
-    ConfigModule.forRoot({ isGlobal: true }),
+    ConfigModule.forRoot({
+      isGlobal: true,
+    }),
+
     TypeOrmModule.forRootAsync({
       inject: [ConfigService],
-      useFactory: (config: ConfigService) => ({
-        type: (config.get<string>('DB_TYPE') ?? 'mysql') as 'mysql' | 'postgres',
-        host: config.get<string>('DB_HOST', 'localhost'),
-        port: Number(config.get('DB_PORT', 3306)),
-        username: config.get<string>('DB_USERNAME', 'root'),
-        password: config.get<string>('DB_PASSWORD', ''),
-        database: config.get<string>('DB_NAME', 'task_management'),
+      useFactory: (configService: ConfigService) => ({
+        type: 'postgres' as const,
+        host: configService.getOrThrow<string>('DB_HOST'),
+        port: configService.getOrThrow<number>('DB_PORT'),
+        username: configService.getOrThrow<string>('DB_USERNAME'),
+        password: configService.getOrThrow<string>('DB_PASSWORD'),
+        database: configService.getOrThrow<string>('DB_DATABASE'),
         autoLoadEntities: true,
-        synchronize: true, // hanya untuk development
+        synchronize: configService.get<string>('NODE_ENV') === 'development',
       }),
     }),
-    TeamsModule,
-    MembersModule,
+
     ProjectsModule,
-    TasksModule,
-    TaskAssignmentsModule,
+    // TeamsModule,           // tambahkan setelah modul Teams selesai
+    // MembersModule,         // tambahkan setelah modul Members selesai
+    // TasksModule,           // tambahkan setelah modul Tasks selesai
+    // TaskAssignmentsModule, // tambahkan setelah modul TaskAssignments selesai
   ],
 })
-export class AppModule {}
+export class AppModule { }
