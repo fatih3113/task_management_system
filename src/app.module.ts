@@ -29,6 +29,9 @@ import { TeamsModule } from './teams/teams.module.js';
     // MembersModule,         // tambahkan setelah modul Members selesai
     // TasksModule,           // tambahkan setelah modul Tasks selesai
     // TaskAssignmentsModule, // tambahkan setelah modul TaskAssignments selesai
+
+    // yang kurang 3 ini
+
   ],
 })
-export class AppModule {}
+export class AppModule { }
