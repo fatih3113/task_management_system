@@ -2,6 +2,8 @@ import {
   Column,
   CreateDateColumn,
   Entity,
+  JoinColumn,
+  ManyToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
@@ -28,6 +30,14 @@ export class Project {
 
   @Column()
   teamId: number;
+
+  @ManyToOne('Team', 'projects', {
+    nullable: false,
+    onDelete: 'RESTRICT',
+    createForeignKeyConstraints: false,
+  })
+  @JoinColumn({ name: 'teamId' })
+  team: object;
 
   @CreateDateColumn()
   createdAt: Date;

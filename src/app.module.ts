@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ProjectsModule } from './projects/projects.module.js';
+import { TeamsModule } from './teams/teams.module.js';
 
 @Module({
   imports: [
@@ -23,11 +24,11 @@ import { ProjectsModule } from './projects/projects.module.js';
       }),
     }),
 
+    TeamsModule,
     ProjectsModule,
-    // TeamsModule,           // tambahkan setelah modul Teams selesai
     // MembersModule,         // tambahkan setelah modul Members selesai
     // TasksModule,           // tambahkan setelah modul Tasks selesai
     // TaskAssignmentsModule, // tambahkan setelah modul TaskAssignments selesai
   ],
 })
-export class AppModule { }
+export class AppModule {}
