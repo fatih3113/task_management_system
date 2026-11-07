@@ -3,6 +3,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ProjectsModule } from './projects/projects.module.js';
 import { TeamsModule } from './teams/teams.module.js';
+import { MembersModule } from './members/members.module.js';
 
 @Module({
   imports: [
@@ -26,7 +27,7 @@ import { TeamsModule } from './teams/teams.module.js';
 
     TeamsModule,
     ProjectsModule,
-    // MembersModule,         // tambahkan setelah modul Members selesai
+    MembersModule,
     // TasksModule,           // tambahkan setelah modul Tasks selesai
     // TaskAssignmentsModule, // tambahkan setelah modul TaskAssignments selesai
 
