@@ -4,6 +4,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { ProjectsModule } from './projects/projects.module.js';
 import { TeamsModule } from './teams/teams.module.js';
 import { MembersModule } from './members/members.module.js';
+import { TasksModule } from './tasks/tasks.module.js';
 
 @Module({
   imports: [
@@ -28,10 +29,10 @@ import { MembersModule } from './members/members.module.js';
     TeamsModule,
     ProjectsModule,
     MembersModule,
-    // TasksModule,           // tambahkan setelah modul Tasks selesai
+    TasksModule,     
     // TaskAssignmentsModule, // tambahkan setelah modul TaskAssignments selesai
 
-    // yang kurang 3 ini
+    // yang kurang 1 ini
 
   ],
 })
