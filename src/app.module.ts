@@ -5,6 +5,7 @@ import { ProjectsModule } from './projects/projects.module.js';
 import { TeamsModule } from './teams/teams.module.js';
 import { MembersModule } from './members/members.module.js';
 import { TasksModule } from './tasks/tasks.module.js';
+import { TaskAssignmentsModule } from './task_assignments/task_assignments.module.js';
 
 @Module({
   imports: [
@@ -29,7 +30,8 @@ import { TasksModule } from './tasks/tasks.module.js';
     TeamsModule,
     ProjectsModule,
     MembersModule,
-    TasksModule,     
+    TasksModule,
+    TaskAssignmentsModule,     
     // TaskAssignmentsModule, // tambahkan setelah modul TaskAssignments selesai
 
     // yang kurang 1 ini
