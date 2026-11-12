@@ -18,18 +18,6 @@ cd uts_framework
 pnpm install
 ```
 
-### 3. Konfigurasi Environment
-Buat file `.env` di root project:
-```env
-PORT=3000
-NODE_ENV=development
-
-DB_HOST=localhost
-DB_PORT=5433
-DB_USERNAME=postgres
-DB_PASSWORD=postgres123
-DB_DATABASE=uts_db
-```
 
 ### 4. Jalankan Database (Docker)
 ```bash
