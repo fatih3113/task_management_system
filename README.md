@@ -1,132 +1,487 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="120" alt="Nest Logo" /></a>
-</p>
+# Task Management API
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+REST API untuk manajemen tim, proyek, tugas, dan penugasan anggota. Dibangun dengan **NestJS**, **TypeORM**, dan **PostgreSQL**.
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg" alt="Donate us"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow" alt="Follow us on Twitter"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+---
 
-## Description
+## 🚀 Cara Menjalankan
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+### 1. Prasyarat
+- Node.js >= 18
+- Docker & Docker Compose
+- pnpm
 
-## Project setup
-
+### 2. Clone & Install
 ```bash
-$ npm install
+git clone <repo-url>
+cd uts_framework
+pnpm install
 ```
 
-## Compile and run the project
+### 3. Konfigurasi Environment
+Buat file `.env` di root project:
+```env
+PORT=3000
+NODE_ENV=development
 
-```bash
-# development
-$ npm run start
-
-# watch mode
-$ npm run start:dev
-
-# production mode
-$ npm run start:prod
+DB_HOST=localhost
+DB_PORT=5433
+DB_USERNAME=postgres
+DB_PASSWORD=postgres123
+DB_DATABASE=uts_db
 ```
 
-## Run tests
-
+### 4. Jalankan Database (Docker)
 ```bash
-# unit tests
-$ npm run test
-
-# e2e tests
-$ npm run test:e2e
-
-# test coverage
-$ npm run test:cov
+docker compose up -d
 ```
 
-## Deployment
-
-When you're ready to deploy your NestJS application to production, there are some key steps you can take to ensure it runs as efficiently as possible. Check out the [deployment documentation](https://docs.nestjs.com/deployment) for more information.
-
-If you are looking for a cloud-based platform to deploy your NestJS application, check out [Mau](https://mau.nestjs.com), our official platform for deploying NestJS applications on AWS. Mau makes deployment straightforward and fast, requiring just a few simple steps:
-
+### 5. Jalankan Aplikasi
 ```bash
-$ npm install -g @nestjs/mau
-$ mau deploy
+# Mode development (auto-reload)
+pnpm run start:dev
+
+# Mode production
+pnpm run start:prod
 ```
 
-With Mau, you can deploy your application in just a few clicks, allowing you to focus on building features rather than managing infrastructure.
+Aplikasi berjalan di: `http://localhost:3000`
 
-## Observability
+> Tabel database dibuat otomatis oleh TypeORM (`synchronize: true`) saat pertama kali app dijalankan.
 
-In production applications, observability is essential for understanding how your system behaves, detecting issues early, and maintaining reliable performance.
+---
 
-[NestJS Observe](https://observe.nestjs.com) automatically instruments your NestJS application, giving you deep visibility into your system with minimal setup:
+## 🗄️ Struktur Tabel & Relasi
 
-- **Distributed tracing:** Follow requests across services and understand how they flow through your system.
-- **Waterfall analysis:** Visualize request execution and identify slow operations, bottlenecks, and unexpected delays.
-- **Performance analysis:** Analyze application performance in real time and quickly pinpoint areas that need optimization.
-- **Metrics:** Track key application and infrastructure metrics to understand system health and performance trends.
-- **Logging:** Centralize and correlate logs with traces and other telemetry to make debugging easier.
-- **Error tracking:** Detect errors quickly and investigate their root causes with the surrounding context.
-- **SLA monitoring:** Track service-level objectives and identify when your application is approaching or exceeding defined thresholds.
-- **Alarms and alerts:** Set up alerts for critical errors, performance degradation, SLA violations, and other anomalies so your team can react quickly.
-
-To add it to this project, run this and approve the code it prints at [observe.nestjs.com/link](https://observe.nestjs.com/link) - signing up for free if you have no account:
-
-```bash
-$ npx @nestjs/observe link
+### Diagram Relasi
+```
+teams (1) ──────< projects (N)
+  │
+  └──────< members (N)
+                │
+                └──────< task_assignments (N) >────── tasks (N)
+                                                          │
+                                                     projects (1)
 ```
 
-It installs `@nestjs/observe`, wires it into `AppModule` and `main.ts`, and writes the app key and secret into `.env`, which every `nest start` script (`start`, `start:dev`, `start:debug`) then loads. In production, set `OBSERVE_APP_KEY` and `OBSERVE_APP_SECRET` in the environment instead.
+### Tabel `teams`
+| Kolom | Tipe | Keterangan |
+|---|---|---|
+| `id` | integer (PK) | Auto increment |
+| `nama` | varchar(100) | Nama tim, **UNIQUE** |
+| `description` | text | Deskripsi (opsional) |
+| `createdAt` | timestamp | Dibuat otomatis |
+| `updatedAt` | timestamp | Diperbarui otomatis |
 
-Or do it by hand:
+### Tabel `members`
+| Kolom | Tipe | Keterangan |
+|---|---|---|
+| `id` | integer (PK) | Auto increment |
+| `nama` | varchar(100) | Nama anggota |
+| `email` | varchar(150) | Email, **UNIQUE** |
+| `role` | varchar(50) | Peran anggota |
+| `teamId` | integer (FK) | Referensi ke `teams.id` |
+| `createdAt` | timestamp | Dibuat otomatis |
+| `updatedAt` | timestamp | Diperbarui otomatis |
 
-```bash
-$ npm install @nestjs/observe
+### Tabel `projects`
+| Kolom | Tipe | Keterangan |
+|---|---|---|
+| `id` | integer (PK) | Auto increment |
+| `nama` | varchar(150) | Nama proyek |
+| `description` | text | Deskripsi (opsional) |
+| `status` | varchar(20) | `active` / `on_hold` / `completed` |
+| `startDate` | date | Tanggal mulai (opsional) |
+| `endDate` | date | Tanggal selesai (opsional) |
+| `teamId` | integer (FK) | Referensi ke `teams.id` |
+| `createdAt` | timestamp | Dibuat otomatis |
+| `updatedAt` | timestamp | Diperbarui otomatis |
+
+### Tabel `tasks`
+| Kolom | Tipe | Keterangan |
+|---|---|---|
+| `id` | integer (PK) | Auto increment |
+| `title` | varchar(200) | Judul tugas |
+| `description` | text | Deskripsi (opsional) |
+| `status` | varchar(20) | `todo` / `in_progress` / `done` / `cancelled` |
+| `priority` | varchar(20) | `low` / `medium` / `high` |
+| `dueDate` | date | Tenggat waktu (opsional) |
+| `projectId` | integer (FK) | Referensi ke `projects.id` |
+| `createdAt` | timestamp | Dibuat otomatis |
+| `updatedAt` | timestamp | Diperbarui otomatis |
+
+### Tabel `task_assignments`
+| Kolom | Tipe | Keterangan |
+|---|---|---|
+| `id` | integer (PK) | Auto increment |
+| `taskId` | integer (FK) | Referensi ke `tasks.id` |
+| `memberId` | integer (FK) | Referensi ke `members.id` |
+| `assignedAt` | timestamp | Waktu penugasan |
+| `createdAt` | timestamp | Dibuat otomatis |
+| `updatedAt` | timestamp | Diperbarui otomatis |
+
+> **UNIQUE:** Kombinasi `(taskId, memberId)` tidak boleh duplikat
+
+---
+
+## 📡 API Endpoints
+
+Base URL: `http://localhost:3000`
+
+---
+
+### 👥 Teams
+
+#### `GET /teams` — Daftar semua tim
+```
+GET http://localhost:3000/teams
+```
+**Response:**
+```json
+[
+  {
+    "id": 1,
+    "nama": "Tim Alpha",
+    "description": "Tim backend",
+    "createdAt": "2026-11-12T08:00:00.000Z",
+    "updatedAt": "2026-11-12T08:00:00.000Z",
+    "projects": []
+  }
+]
 ```
 
-Then follow the [setup guide](https://docs.nestjs.com/observability/sdk) - it takes a single import and an app key.
+#### `GET /teams/:id` — Detail tim
+```
+GET http://localhost:3000/teams/1
+```
 
-The free plan needs no payment details and covers 300,000 events a month. You can also browse the [live demo](https://www.observe-demo.nestjs.com/dashboard) first - the whole dashboard over a busy service's data, with nothing to install.
+#### `POST /teams` — Buat tim baru
+```
+POST http://localhost:3000/teams
+Content-Type: application/json
+```
+**Body:**
+```json
+{
+  "nama": "Tim Alpha",
+  "description": "Deskripsi tim (opsional)"
+}
+```
+| Field | Wajib | Keterangan |
+|---|---|---|
+| `nama` | ✅ | Maks 100 karakter, unik |
+| `description` | ❌ | Bebas |
 
-## Resources
+#### `PATCH /teams/:id` — Update tim
+```
+PATCH http://localhost:3000/teams/1
+Content-Type: application/json
+```
+**Body (semua opsional):**
+```json
+{
+  "nama": "Tim Alpha Baru",
+  "description": "Deskripsi baru"
+}
+```
 
-Check out a few resources that may come in handy when working with NestJS:
+#### `DELETE /teams/:id` — Hapus tim
+```
+DELETE http://localhost:3000/teams/1
+```
+> ⚠️ Gagal jika tim masih memiliki proyek
 
-- Visit the [NestJS Documentation](https://docs.nestjs.com) to learn more about the framework.
-- For questions and support, please visit our [Discord channel](https://discord.gg/G7Qnnhy).
-- To dive deeper and get more hands-on experience, check out our official video [courses](https://courses.nestjs.com/).
-- Deploy your application to AWS with the help of [NestJS Mau](https://mau.nestjs.com) in just a few clicks.
-- Auto-instrument your application with [NestJS Observe](https://observe.nestjs.com). Distributed tracing, metrics, and logging made easy. Error tracking and performance monitoring for your NestJS applications.
-- Visualize your application graph and interact with the NestJS application in real-time using [NestJS Devtools](https://devtools.nestjs.com).
-- Need help with your project (part-time to full-time)? Check out our official [enterprise support](https://enterprise.nestjs.com).
-- To stay in the loop and get updates, follow us on [X](https://x.com/nestframework) and [LinkedIn](https://linkedin.com/company/nestjs).
-- Looking for a job, or have a job to offer? Check out our official [Jobs board](https://jobs.nestjs.com).
+---
 
-## Support
+### 🧑‍💼 Members
 
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
+#### `GET /members` — Daftar semua anggota
+```
+GET http://localhost:3000/members
+GET http://localhost:3000/members?teamId=1
+```
+**Query params:**
+| Param | Keterangan |
+|---|---|
+| `teamId` | Filter berdasarkan tim |
 
-## Stay in touch
+#### `GET /members/:id` — Detail anggota
+```
+GET http://localhost:3000/members/1
+```
 
-- Author - [Kamil Myśliwiec](https://twitter.com/kammysliwiec)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
+#### `POST /members` — Tambah anggota
+```
+POST http://localhost:3000/members
+Content-Type: application/json
+```
+**Body:**
+```json
+{
+  "teamId": 1,
+  "nama": "Budi Santoso",
+  "email": "budi@example.com",
+  "role": "Backend Developer"
+}
+```
+| Field | Wajib | Keterangan |
+|---|---|---|
+| `teamId` | ✅ | ID tim yang ada |
+| `nama` | ✅ | Maks 100 karakter |
+| `email` | ✅ | Format email valid, unik |
+| `role` | ✅ | Maks 50 karakter |
 
-## License
+#### `PATCH /members/:id` — Update anggota
+```
+PATCH http://localhost:3000/members/1
+Content-Type: application/json
+```
+**Body (semua opsional):**
+```json
+{
+  "nama": "Budi Santoso Jr",
+  "email": "budi.jr@example.com",
+  "role": "Senior Backend",
+  "teamId": 2
+}
+```
+> ⚠️ Tidak bisa pindah tim jika masih punya penugasan aktif
 
-Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
+#### `DELETE /members/:id` — Hapus anggota
+```
+DELETE http://localhost:3000/members/1
+```
+> ⚠️ Gagal jika anggota masih memiliki penugasan
+
+---
+
+### 📁 Projects
+
+#### `GET /projects` — Daftar semua proyek
+```
+GET http://localhost:3000/projects
+GET http://localhost:3000/projects?teamId=1
+GET http://localhost:3000/projects?status=active
+GET http://localhost:3000/projects?teamId=1&status=on_hold
+```
+**Query params:**
+| Param | Nilai | Keterangan |
+|---|---|---|
+| `teamId` | number | Filter berdasarkan tim |
+| `status` | `active` / `on_hold` / `completed` | Filter berdasarkan status |
+
+#### `GET /projects/:id` — Detail proyek
+```
+GET http://localhost:3000/projects/1
+```
+
+#### `POST /projects` — Buat proyek baru
+```
+POST http://localhost:3000/projects
+Content-Type: application/json
+```
+**Body:**
+```json
+{
+  "teamId": 1,
+  "nama": "Project UAS Framework",
+  "status": "active",
+  "description": "Deskripsi proyek (opsional)",
+  "startDate": "2026-11-12",
+  "endDate": "2026-12-31"
+}
+```
+| Field | Wajib | Keterangan |
+|---|---|---|
+| `teamId` | ✅ | ID tim yang ada |
+| `nama` | ✅ | Maks 100 karakter |
+| `status` | ✅ | `active` / `on_hold` / `completed` |
+| `description` | ❌ | Bebas |
+| `startDate` | ❌ | Format `YYYY-MM-DD` |
+| `endDate` | ❌ | Format `YYYY-MM-DD`, tidak boleh sebelum `startDate` |
+
+#### `PATCH /projects/:id` — Update proyek
+```
+PATCH http://localhost:3000/projects/1
+Content-Type: application/json
+```
+**Body (semua opsional):**
+```json
+{
+  "nama": "Nama Baru",
+  "status": "on_hold",
+  "description": "Update deskripsi",
+  "startDate": "2026-11-15",
+  "endDate": "2027-01-31"
+}
+```
+
+#### `DELETE /projects/:id` — Hapus proyek
+```
+DELETE http://localhost:3000/projects/1
+```
+
+---
+
+### ✅ Tasks
+
+#### `GET /tasks` — Daftar semua tugas
+```
+GET http://localhost:3000/tasks
+GET http://localhost:3000/tasks?projectId=1
+GET http://localhost:3000/tasks?status=todo
+GET http://localhost:3000/tasks?priority=high
+```
+**Query params:**
+| Param | Nilai | Keterangan |
+|---|---|---|
+| `projectId` | number | Filter berdasarkan proyek |
+| `status` | `todo` / `in_progress` / `done` / `cancelled` | Filter status |
+| `priority` | `low` / `medium` / `high` | Filter prioritas |
+
+#### `GET /tasks/:id` — Detail tugas
+```
+GET http://localhost:3000/tasks/1
+```
+
+#### `POST /tasks` — Buat tugas baru
+```
+POST http://localhost:3000/tasks
+Content-Type: application/json
+```
+**Body:**
+```json
+{
+  "projectId": 1,
+  "title": "Desain halaman login",
+  "description": "Buat wireframe dan mockup UI login",
+  "priority": "high",
+  "dueDate": "2026-12-01"
+}
+```
+| Field | Wajib | Keterangan |
+|---|---|---|
+| `projectId` | ✅ | ID proyek yang ada & berstatus `active`/`on_hold` |
+| `title` | ✅ | Maks 200 karakter |
+| `description` | ❌ | Bebas |
+| `priority` | ❌ | `low` / `medium` / `high` (default: `medium`) |
+| `dueDate` | ❌ | Format `YYYY-MM-DD`, tidak boleh masa lalu |
+
+> Status tugas otomatis `todo` saat dibuat
+
+#### `PATCH /tasks/:id` — Update tugas
+```
+PATCH http://localhost:3000/tasks/1
+Content-Type: application/json
+```
+**Body (semua opsional):**
+```json
+{
+  "title": "Judul baru",
+  "status": "in_progress",
+  "priority": "medium",
+  "dueDate": "2026-12-15"
+}
+```
+
+**Aturan perpindahan status:**
+| Dari | Boleh ke |
+|---|---|
+| `todo` | `in_progress`, `cancelled` |
+| `in_progress` | `todo`, `done`, `cancelled` |
+| `done` | *(final, tidak bisa diubah)* |
+| `cancelled` | *(final, tidak bisa diubah)* |
+
+> ⚠️ Status `in_progress` hanya bisa diset jika tugas sudah memiliki minimal 1 penugasan
+
+#### `DELETE /tasks/:id` — Hapus tugas
+```
+DELETE http://localhost:3000/tasks/1
+```
+> Semua `task_assignments` terkait ikut terhapus otomatis (CASCADE)
+
+---
+
+### 📌 Task Assignments
+
+#### `GET /task-assignments` — Daftar penugasan
+```
+GET http://localhost:3000/task-assignments
+GET http://localhost:3000/task-assignments?taskId=1
+GET http://localhost:3000/task-assignments?memberId=2
+```
+**Query params:**
+| Param | Keterangan |
+|---|---|
+| `taskId` | Filter berdasarkan tugas |
+| `memberId` | Filter berdasarkan anggota |
+
+#### `GET /task-assignments/:id` — Detail penugasan
+```
+GET http://localhost:3000/task-assignments/1
+```
+
+#### `POST /task-assignments` — Assign anggota ke tugas
+```
+POST http://localhost:3000/task-assignments
+Content-Type: application/json
+```
+**Body:**
+```json
+{
+  "taskId": 1,
+  "memberId": 2
+}
+```
+| Field | Wajib | Keterangan |
+|---|---|---|
+| `taskId` | ✅ | ID tugas yang ada |
+| `memberId` | ✅ | ID anggota yang ada |
+
+> ⚠️ Kombinasi `taskId` + `memberId` tidak boleh duplikat
+
+#### `DELETE /task-assignments/:id` — Hapus penugasan
+```
+DELETE http://localhost:3000/task-assignments/1
+```
+
+---
+
+## ⚠️ Aturan Bisnis
+
+| # | Aturan |
+|---|---|
+| 1 | Satu anggota hanya bisa di-assign ke satu tugas **satu kali** (UNIQUE taskId + memberId) |
+| 2 | Tugas tidak bisa dibuat di proyek yang berstatus `completed` |
+| 3 | Status tugas hanya bisa berpindah sesuai alur yang ditentukan |
+| 4 | Status `in_progress` butuh minimal **1 anggota** ter-assign |
+| 5 | Anggota tidak bisa pindah tim jika masih punya penugasan aktif |
+| 6 | Anggota tidak bisa dihapus jika masih punya penugasan |
+| 7 | Tim tidak bisa dihapus jika masih punya proyek |
+
+---
+
+## 🛠️ Teknologi
+
+| Teknologi | Versi |
+|---|---|
+| NestJS | ^12.x |
+| TypeORM | ^1.x |
+| PostgreSQL | 17 |
+| Node.js | >= 18 |
+| TypeScript | ^6.x |
+
+---
+
+## 📂 Struktur Folder
+
+```
+src/
+├── teams/              # Modul Tim
+├── members/            # Modul Anggota
+├── projects/           # Modul Proyek
+├── tasks/              # Modul Tugas
+├── task_assignments/   # Modul Penugasan
+├── app.module.ts
+└── main.ts
+```
