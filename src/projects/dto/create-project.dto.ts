@@ -1,6 +1,5 @@
 import {
   IsDateString,
-  IsIn,
   IsInt,
   IsNotEmpty,
   IsOptional,
@@ -9,9 +8,6 @@ import {
   MaxLength,
 } from 'class-validator';
 import { Type } from 'class-transformer';
-
-export const PROJECT_STATUSES = ['active', 'on_hold', 'completed'] as const;
-export type ProjectStatus = (typeof PROJECT_STATUSES)[number];
 
 export class CreateProjectDto {
   @Type(() => Number)
@@ -27,6 +23,11 @@ export class CreateProjectDto {
   @IsOptional()
   @IsString()
   description?: string;
+
+  @IsString({ message: 'Status proyek harus berupa teks' })
+  @IsNotEmpty({ message: 'Status proyek tidak boleh kosong' })
+  @MaxLength(20, { message: 'Status proyek maksimal 20 karakter' })
+  status: string;
 
   @IsOptional()
   @IsDateString({}, { message: 'startDate harus berformat YYYY-MM-DD' })
@@ -45,8 +46,7 @@ export class FindProjectsQueryDto {
   teamId?: number;
 
   @IsOptional()
-  @IsIn(PROJECT_STATUSES, {
-    message: `status harus salah satu dari: ${PROJECT_STATUSES.join(', ')}`,
-  })
+  @IsString()
+  @MaxLength(20, { message: 'Status proyek maksimal 20 karakter' })
   status?: string;
 }

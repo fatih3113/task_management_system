@@ -18,7 +18,7 @@ import { Project } from './entities/project.entity.js';
 
 @Controller('projects')
 export class ProjectsController {
-  constructor(private readonly projectsService: ProjectsService) {}
+  constructor(private readonly projectsService: ProjectsService) { }
 
   @Get()
   findAll(@Query() query: FindProjectsQueryDto): Promise<Project[]> {
@@ -31,8 +31,7 @@ export class ProjectsController {
   }
 
   @Post()
-  @HttpCode(HttpStatus.CREATED)
-  create(@Body() createProjectDto: CreateProjectDto): Promise<Project> {
+  create(@Body() createProjectDto: CreateProjectDto) {
     return this.projectsService.create(createProjectDto);
   }
 

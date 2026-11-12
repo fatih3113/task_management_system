@@ -1,6 +1,5 @@
 import {
   BadRequestException,
-  ConflictException,
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
@@ -9,8 +8,6 @@ import { FindOptionsWhere, Repository } from 'typeorm';
 import { Project } from './entities/project.entity.js';
 import { CreateProjectDto, FindProjectsQueryDto } from './dto/create-project.dto.js';
 import { UpdateProjectDto } from './dto/update-project.dto.js';
-
-const FINAL_TASK_STATUSES = ['done', 'cancelled'];
 
 @Injectable()
 export class ProjectsService {
@@ -49,7 +46,7 @@ export class ProjectsService {
       description: dto.description ?? null,
       startDate: dto.startDate ? dto.startDate.slice(0, 10) : null,
       endDate: dto.endDate ? dto.endDate.slice(0, 10) : null,
-      status: 'active',
+      status: dto.status,
     });
 
     const saved = await this.projectRepository.save(project);

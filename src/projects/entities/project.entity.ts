@@ -19,7 +19,7 @@ export class Project {
   @Column({ type: 'text', nullable: true })
   description: string | null;
 
-  @Column({ type: 'varchar', length: 20, default: 'active' })
+  @Column({ type: 'varchar', length: 20 })
   status: string;
 
   @Column({ type: 'date', nullable: true })
